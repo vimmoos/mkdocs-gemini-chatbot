@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mkdocs-gemini-chatbot"
+version = "1.0.0"
+authors = [
+  { name="Massimiliano Falzari", email="massimiliano@falzari.dev" },
+]
+
+description = "A MkDocs plugin to add a Gemini-powered chatbot to your documentation site."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.8"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Documentation",
+    "Topic :: Software Development :: Documentation",
+]
+dependencies = [
+    "mkdocs>=1.4",
+    "beautifulsoup4",
+    "python-dotenv",
+]
+
+[project.urls]
+Homepage = "https://github.com/vimmoos/mkdocs-gemini-chatbot.git"
+Repository = "https://github.com/vimmoos/mkdocs-gemini-chatbot.git"
+
+[project.entry-points."mkdocs.plugins"]
+gemini-chatbot = "mkdocs_gemini_chatbot.plugin:GeminiChatbotPlugin"
