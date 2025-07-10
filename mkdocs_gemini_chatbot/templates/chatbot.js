@@ -1,5 +1,3 @@
-// mkdocs_gemini_chatbot/templates/chatbot.js
-
 document.addEventListener('DOMContentLoaded', () => {
     const chatbot = document.getElementById('gemini-chatbot');
     const openChatBtn = document.getElementById('open-chat');
@@ -12,28 +10,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let allDocsContent = null;
     let isContentLoading = false;
-    let chatHistory = []; // NEW: structured history for the API
+    let chatHistory = [];
 
-    // --- NEW: Function to rebuild the visual chat from history ---
     function rebuildChatFromHistory() {
         chatMessages.innerHTML = '';
         chatHistory.forEach(turn => {
             const sender = turn.role === 'user' ? 'user' : 'bot';
-            // Since history text is already processed, we just add it
             addMessage(sender, turn.parts[0].text, false);
         });
     }
 
-    // --- NEW: Function to save history ---
     function saveHistory() {
         sessionStorage.setItem('geminiChatHistory', JSON.stringify(chatHistory));
     }
 
     clearHistoryBtn.addEventListener('click', () => {
-        chatHistory = []; // Clear the structured history
-        sessionStorage.removeItem('geminiChatHistory'); // Clear stored history
-        chatMessages.innerHTML = ''; // Clear visually
-        addMessage('bot', window.INITIAL_PROMPT); // Add the welcome message back
+        chatHistory = [];
+        sessionStorage.removeItem('geminiChatHistory');
+        chatMessages.innerHTML = '';
+        addMessage('bot', window.INITIAL_PROMPT);
     });
 
     fullscreenBtn.addEventListener('click', () => {
@@ -74,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (addToHistory) {
-            // Push the raw, un-rendered text to the history array
             chatHistory.push({ role: (sender === 'user' ? 'user' : 'model'), parts: [{ text: text }] });
             saveHistory();
         }
@@ -87,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (allDocsContent || isContentLoading) return;
         isContentLoading = true;
 
-        // Show loading message only if there's no history
         const savedHistory = sessionStorage.getItem('geminiChatHistory');
         if (!savedHistory) {
             addMessage('bot', 'Loading documentation...', false);
@@ -99,11 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             allDocsContent = data.map(doc => `Page: ${doc.title}\nURL: ${doc.url}\nContent:\n${doc.content}`).join('\n\n---\n\n');
 
-            // Remove "Loading..." message if it exists
             const loadingMessage = Array.from(chatMessages.children).find(child => child.textContent.includes('Loading documentation...'));
             if (loadingMessage) loadingMessage.remove();
 
-            // If there was no history, add the initial prompt now
             if (!savedHistory) {
                 addMessage('bot', window.INITIAL_PROMPT);
             }
@@ -156,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            // --- UPDATED PROMPT FOR PRECISION LINKING ---
             const systemInstruction = {
                 role: "system",
                 parts: [{ text: `You are an expert AI assistant for this documentation. Your primary goal is to provide accurate answers and always link to the source material with the highest possible precision.

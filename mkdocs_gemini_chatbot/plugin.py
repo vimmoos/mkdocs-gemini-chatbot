@@ -1,5 +1,3 @@
-# mkdocs_gemini_chatbot/plugin.py
-
 import os
 import json
 import importlib.resources
@@ -66,16 +64,12 @@ class GeminiChatbotPlugin(BasePlugin[GeminiChatbotConfig]):
             general_text = content_div.get_text(separator=" ", strip=True)
 
             anchor_texts = []
-            # This finds all tags that have an 'id' attribute, which mkdocstrings uses
             for tag in content_div.find_all(id=True):
                 tag_id = tag.get("id")
-                # Get focused text from the anchor tag, limit length to avoid noise
                 tag_text = tag.get_text(separator=" ", strip=True)
                 if tag_text:
-                    # Create a special marker for the LLM to find
                     anchor_texts.append(f"[ANCHOR: #{tag_id}] {tag_text} [/ANCHOR]")
 
-            # Combine general text with specific anchor information
             final_content = (
                 general_text + "\n\n---LINKABLE SECTIONS---\n" + "\n".join(anchor_texts)
             )
@@ -83,10 +77,6 @@ class GeminiChatbotPlugin(BasePlugin[GeminiChatbotConfig]):
             self.all_docs_content.append(
                 {"title": page.title, "url": page.abs_url, "content": final_content}
             )
-            # clean_text = content_div.get_text(separator=" ", strip=True)
-            # self.all_docs_content.append(
-            #     {"title": page.title, "url": page.abs_url, "content": clean_text}
-            # )
 
         site_url = config.get("site_url", "/")
         if not site_url.endswith("/"):
